@@ -35,7 +35,7 @@ end
 
 %INITIALIZATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-fprintf(1,'\nProcessing image %s...',calib_data.L{kk});
+% fprintf(1,'\nProcessing image %s...',calib_data.L{kk});
 
 I = imread(calib_data.L{kk});
 
@@ -78,7 +78,7 @@ cd ..
 %Do error checking
 if callBack == 0
     %Display the error message
-    fprintf(1,'Image omitted -- Not all corners found\n');
+    errordlg(sprintf('Processing image %s... Image omitted -- Not all corners found', calib_data.L{kk}));
     return;
 end
 
@@ -88,7 +88,7 @@ if callBack ~= 1
     fid = fopen(filename, 'r');
     line = fgetl(fid);
     fclose(fid);
-    fprintf(1,'Image omitted -- During corner finding an error occured: %s \n',line);
+    errordlg(sprintf('Processing imege %s... Image omitted -- During corner finding an error occured: %s', calib_data.L{kk}, line));
     return;
 end
 

@@ -51,4 +51,8 @@ if cont_save,
 
     fprintf(1,'done\n');
     
+    h = msgbox('Saving results as Omni_Calib_Results.mat. Done.');
+    uiwait(h);
+
+    
 end;

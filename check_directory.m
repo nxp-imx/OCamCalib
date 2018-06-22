@@ -95,8 +95,8 @@ if Nl > 0,
         end;
         
         if (Nima_valid==0),
-            
-            fprintf(1,'No image found. File format may be wrong.\n');
+            err = errordlg('No image found. File format may be wrong','File Not Found Error');
+            uiwait(err);
             
         else
             

@@ -102,7 +102,8 @@ while (i <= calib_data.n_ima), % & (~no_image_file),
    i = i+1;   
    
 end;
-
+h = msgbox(sprintf('%d images loaded',i-1));
+uiwait(h);
 
 calib_data.ind_read = find(images_read);
 

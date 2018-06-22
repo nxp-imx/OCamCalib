@@ -23,7 +23,7 @@ s_gif = size(l_gif,1);
 s_tot = s_ras + s_bmp + s_tif + s_pgm + s_jpg + s_ppm + s_gif;
 
 if s_tot < 1,
-   fprintf(1,'No image in this directory in either ras, bmp, tif, gif, pgm, ppm or jpg format. Change directory and try again.\n');
+   errordlg('No image in this directory in either ras, bmp, tif, gif, pgm, ppm or jpg format. Change directory and try again','File Not Found Error');
    return;
 end;
 
@@ -34,20 +34,22 @@ dir;
 
 Nima_valid = 0;
 
-while (Nima_valid==0),
-
-   fprintf(1,'\n');
-   calib_data.calib_name = input('Basename camera calibration images (without number nor suffix): ','s');
-   
-   calib_data.format_image = '0';
+while (Nima_valid==0),    
+    
+    calib_data.format_image = '0';
+    
+    prompt = {'Basename camera calibration images (without number nor suffix): ',
+        'Image format: ([]=''r''=''ras'', ''b''=''bmp'', ''t''=''tif'', ''g''=''gif'', ''p''=''pgm'', ''j''=''jpg'', ''m''=''ppm'') '};
+    dlg_title = 'Read files';
+    num_lines = 1;
+    
+       
    
 	while calib_data.format_image == '0',
    
-   	calib_data.format_image =  input('Image format: ([]=''r''=''ras'', ''b''=''bmp'', ''t''=''tif'', ''g''=''gif'', ''p''=''pgm'', ''j''=''jpg'', ''m''=''ppm'') ','s');
-		
-		if isempty(calib_data.format_image),
-   		calib_data.format_image = 'ras';
-		end;
+   	answer = inputdlg(prompt,dlg_title,num_lines);    
+    calib_data.calib_name = answer{1};
+    calib_data.format_image = answer{2};
       
       if lower(calib_data.format_image(1)) == 'm',
          calib_data.format_image = 'ppm';
@@ -70,7 +72,8 @@ while (Nima_valid==0),
                          if lower(calib_data.format_image(1)) == 'g',
                              calib_data.format_image = 'gif';
                          else  
-                             disp('Invalid image format');
+                             err = errordlg('Invalid image format');
+                             uiwait(err);
                              calib_data.format_image = '0'; % Ask for format once again
                          end;
                      end;

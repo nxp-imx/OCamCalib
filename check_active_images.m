@@ -17,7 +17,8 @@ if calib_data.n_ima ~= 0,
     calib_data.ind_active = find(calib_data.active_images);
     
     if prod(double(calib_data.active_images == 0)),
-        disp('Error: There is no active image. Run Add/Suppress images to add images');
+        err = errordlg('Error: There is no active image. Run Add/Suppress images to add images');
+        uiwait(err);
         return;
     end;
 

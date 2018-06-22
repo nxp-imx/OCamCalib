@@ -14,11 +14,13 @@
 %   and Nheight
 %   Author: Davide Scaramuzza, 2009
 
-function Nimg = undistort( ocam_model, img , fc, display)
+function Nimg = undistort( ocam_model, img , fc, display, Nwidth, Nheight)
 
 % Parameters of the new image
-Nwidth = 640; %size of the final image
-Nheight = 480;
+if nargin < 5
+    Nwidth = 640; %size of the final image
+    Nheight = 480;
+end
 Nxc = Nheight/2;
 Nyc = Nwidth/2;
 Nz  = -Nwidth/fc;
@@ -51,7 +53,9 @@ m = world2cam_fast( M , ocam_model );
 if length(size(img)) == 2
     I(:,:,1) = img;
     I(:,:,2) = img;
-    I(:,:,3) = img;    
+    I(:,:,3) = img;
+else
+    I = img;
 end
 [r,g,b] = get_color_from_imagepoints( I, m' );
 Nimg = reshape(r,Nwidth,Nheight)';

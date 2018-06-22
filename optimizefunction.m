@@ -30,7 +30,8 @@ fprintf(1,'Because of the computations involved this refinement can take some se
 
 fprintf(1,'Loop interrupting: Press enter to stop refinement. (OCamCalib GUI must be selected!)\n');
 
-max_iter = input('\n Maximum number of iterations ([] = 100, 0 = abort, -1 = no limit) = ');
+% max_iter = input('\n Maximum number of iterations ([] = 100, 0 = abort, -1 = no limit) = ');
+max_iter = [];
 
 if ~isempty(max_iter)
     if max_iter == 0
@@ -156,5 +157,7 @@ end
 ss = calib_data.ocam_model.ss;
 ss
 
+h = msgbox('Calibration refinement done.');
+uiwait(h);
 
 

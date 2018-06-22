@@ -40,3 +40,6 @@ fprintf(fid,'#image size: "height" and "width"\n\n');
 fprintf(fid,'%d %d\n\n',ocam_model.height, ocam_model.width);
 
 fclose(fid);
+
+h = msgbox('Exporting ocam_model to "calib_results.txt". Done.');
+uiwait(h);

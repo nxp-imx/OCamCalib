@@ -36,7 +36,8 @@ check_active_images(calib_data);
 if isempty(calib_data.I{calib_data.ind_active(1)}),
     ima_read_calib(calib_data);
     if isempty(calib_data.ind_read),
-        disp('Cannot extract corners without images');
+        err = errordlg('Cannot extract corners without images','File Not Found Error');
+        uiwait(err);
         return;
     end;
 end;
@@ -138,7 +139,8 @@ if ~isempty(calib_data.ima_proc)
     else
         calib_data.ima_proc=[];
         ima_numbers=[];
-        answer = input('\nType the images you want to process (e.g. [1 2 3], [] = all images) = ');
+%         answer = input('\nType the images you want to process (e.g. [1 2 3], [] = all images) = ');
+        answer = [];
         if isempty(answer)
             ima_numbers = 1:calib_data.n_ima;
         else
@@ -146,7 +148,8 @@ if ~isempty(calib_data.ima_proc)
         end
     end;
 else
-    answer=input('\nType the images you want to process (e.g. [1 2 3], [] = all images) = ');
+%     answer=input('\nType the images you want to process (e.g. [1 2 3], [] = all images) = ');
+    answer = [];
     if isempty(answer)
         ima_numbers = 1:calib_data.n_ima;
     else
@@ -167,16 +170,39 @@ end;
 % else
 %     manual_squares = 0;
 % end;
+
+    prompt = {'Number of squares along the X direction: ', ...
+        'Number of squares along the Y direction: ', ...
+        'Size dX of each square along the X direction: ', ...
+        'Size dY of each square along the Y direction: ', ...
+        'X coordinate (along height) of the omnidirectional image center: ', ...
+        'Y coordinate (along width) of the omnidirectional image center: '};
+    
+    dlg_title = 'Extract corners';
+    num_lines = 1;
+    defaultans = {num2str(n_sq_x_default), num2str(n_sq_y_default), ...
+        num2str(dX_default), num2str(dY_default), ...
+        num2str(xc_default), num2str(yc_default)};
+    
+    answer = inputdlg(prompt,dlg_title,num_lines,defaultans); 
+    calib_data.n_sq_x = str2double(answer{1});
+    calib_data.n_sq_y = str2double(answer{2});
+    calib_data.dX = str2double(answer{3});
+    calib_data.dY = str2double(answer{4});
+    calib_data.ocam_model.xc = str2double(answer{5});
+    calib_data.ocam_model.yc = str2double(answer{6});
+    
+    
 manual_squares=1;
 
-if manual_squares,
-    
-    calib_data.n_sq_x = input(['Number of squares along the X direction ([]=' num2str(n_sq_x_default) ') = ']); %6
-    if isempty(calib_data.n_sq_x), calib_data.n_sq_x = n_sq_x_default; end;
-    calib_data.n_sq_y = input(['Number of squares along the Y direction ([]=' num2str(n_sq_y_default) ') = ']); %6
-    if isempty(calib_data.n_sq_y), calib_data.n_sq_y = n_sq_y_default; end; 
-    
-end;
+% if manual_squares,
+%     
+%     calib_data.n_sq_x = input(['Number of squares along the X direction ([]=' num2str(n_sq_x_default) ') = ']); %6
+%     if isempty(calib_data.n_sq_x), calib_data.n_sq_x = n_sq_x_default; end;
+%     calib_data.n_sq_y = input(['Number of squares along the Y direction ([]=' num2str(n_sq_y_default) ') = ']); %6
+%     if isempty(calib_data.n_sq_y), calib_data.n_sq_y = n_sq_y_default; end; 
+%     
+% end;
 
 num_points=(calib_data.n_sq_x+1)*(calib_data.n_sq_y+1);
 
@@ -184,38 +210,39 @@ n_sq_x_default = calib_data.n_sq_x;
 n_sq_y_default = calib_data.n_sq_y;
 
 
-if (isempty(calib_data.dX))|(isempty(calib_data.dY)), % This question is now asked only once
-    % Enter the size of each square
-    
-    calib_data.dX = input(['Size dX of each square along the X direction ([]=' num2str(dX_default) 'mm) = ']);
-    calib_data.dY = input(['Size dY of each square along the Y direction ([]=' num2str(dY_default) 'mm) = ']);
-    if isempty(calib_data.dX), calib_data.dX = dX_default; else dX_default = calib_data.dX; end;
-    if isempty(calib_data.dY), calib_data.dY = dY_default; else dY_default = calib_data.dY; end;
-    
-else
-    
-    fprintf(1,['Size of each square along the X direction: dX=' num2str(calib_data.dX) 'mm\n']);
-    fprintf(1,['Size of each square along the Y direction: dY=' num2str(calib_data.dY) 'mm   (Note: To reset the size of the squares, clear the variables dX and dY)\n']);
-    %fprintf(1,'Note: To reset the size of the squares, clear the variables dX and dY\n');
-    
-end;
+% if (isempty(calib_data.dX))|(isempty(calib_data.dY)), % This question is now asked only once
+%     % Enter the size of each square
+%     
+%     calib_data.dX = input(['Size dX of each square along the X direction ([]=' num2str(dX_default) 'mm) = ']);
+%     calib_data.dY = input(['Size dY of each square along the Y direction ([]=' num2str(dY_default) 'mm) = ']);
+%     if isempty(calib_data.dX), calib_data.dX = dX_default; else dX_default = calib_data.dX; end;
+%     if isempty(calib_data.dY), calib_data.dY = dY_default; else dY_default = calib_data.dY; end;
+%     
+% else
+%     
+%     fprintf(1,['Size of each square along the X direction: dX=' num2str(calib_data.dX) 'mm\n']);
+%     fprintf(1,['Size of each square along the Y direction: dY=' num2str(calib_data.dY) 'mm   (Note: To reset the size of the squares, clear the variables dX and dY)\n']);
+%     %fprintf(1,'Note: To reset the size of the squares, clear the variables dX and dY\n');
+%     
+% end;
 
 square_vert_side=calib_data.dX; %mm
 square_horiz_side=calib_data.dY; %mm
 num_vert_square=calib_data.n_sq_x;
 num_horiz_square=calib_data.n_sq_y;
 
-calib_data.ocam_model.xc=input(['X coordinate (along height) of the omnidirectional image center = ([]=' num2str(xc_default) ') = ']);    
-calib_data.ocam_model.yc=input(['Y coordinate (along width) of the omnidirectional image center = ([]=' num2str(yc_default) ') = ']);    
-if isempty(calib_data.ocam_model.xc), calib_data.ocam_model.xc = xc_default; else xc_default = calib_data.ocam_model.xc; end;
-if isempty(calib_data.ocam_model.yc), calib_data.ocam_model.yc = yc_default; else yc_default = calib_data.ocam_model.yc; end;
+% calib_data.ocam_model.xc=input(['X coordinate (along height) of the omnidirectional image center = ([]=' num2str(xc_default) ') = ']);    
+% calib_data.ocam_model.yc=input(['Y coordinate (along width) of the omnidirectional image center = ([]=' num2str(yc_default) ') = ']);    
+% if isempty(calib_data.ocam_model.xc), calib_data.ocam_model.xc = xc_default; else xc_default = calib_data.ocam_model.xc; end;
+% if isempty(calib_data.ocam_model.yc), calib_data.ocam_model.yc = yc_default; else yc_default = calib_data.ocam_model.yc; end;
 % xc=385.48;
 % yc=516.36;
 
 
 fprintf(1,'\nEXTRACTION OF THE GRID CORNERS\n');
 fprintf(1,'Do you want to use the automatic image selection\n');
-answer=input('or do you want to process the images individually ( [] = automatic, other = individual )? ','s');
+% answer=input('or do you want to process the images individually ( [] = automatic, other = individual )? ','s');
+answer = [];
 
 if isempty(answer)
     use_video_mode = 1;
@@ -299,6 +326,9 @@ end
 check_active_images(calib_data);
 
 fprintf(1,'\nCorner extraction finished.\n');
+
+h = msgbox('Corner extraction finished.');
+uiwait(h);
 
 end
 

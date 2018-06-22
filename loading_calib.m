@@ -1,5 +1,6 @@
 if ~exist('Omni_Calib_Results.mat'),
-   fprintf(1,'\nCalibration file Omni_Calib_Results.mat not found!\n');
+   h = errordlg('Calibration file Omni_Calib_Results.mat not found!');
+   uiwait(h);
    return;
 end;
 
@@ -9,3 +10,6 @@ clear calib_data;
 load Omni_Calib_Results.mat
 
 fprintf(1,'done\n');
+
+h = msgbox('Loading calibration results from Omni_Calib_Results.mat. Done.');
+uiwait(h);

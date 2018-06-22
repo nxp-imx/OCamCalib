@@ -21,7 +21,8 @@
 function findcenter(calib_data)
 
 if isempty(calib_data.ima_proc) | isempty(calib_data.Xp_abs)
-    fprintf(1,'\nNo corner data available. Extract grid corners before calibrating.\n\n');
+    err = errordlg('No corner data available. Extract grid corners before calibrating');
+    uiwait(err);
     return;
 end
 
@@ -45,7 +46,8 @@ xregstart=pxc-(regheight/2);
 xregstop= pxc+(regheight/2);
 yregstart=pyc-(regwidth/2);
 yregstop= pyc+(regwidth/2);
-fprintf(1,'Iteration ');
+
+h = waitbar(0,'This may take a while. Please wait...', 'name', 'Finding center');
 for glc=1:9
     [yreg,xreg]=meshgrid(yregstart:(yregstop-yregstart)/yceil:yregstop+1/yceil, xregstart:(xregstop-xregstart)/xceil:xregstop+1/xceil);
     ic_proc=[ 1:size(xreg,1) ];
@@ -96,10 +98,12 @@ for glc=1:9
     xregstop =calib_data.ocam_model.xc+dx_reg;
     yregstart=calib_data.ocam_model.yc-dy_reg;
     yregstop =calib_data.ocam_model.yc+dy_reg;
-    fprintf(1,'%d...',glc);
+    
+    waitbar(glc / 9)
 end
+close(h) 
 
-fprintf(1,'\n');
+
 [calib_data.RRfin,calib_data.ocam_model.ss]=calibrate(calib_data.Xt, calib_data.Yt, calib_data.Xp_abs, calib_data.Yp_abs, calib_data.ocam_model.xc, calib_data.ocam_model.yc, calib_data.taylor_order, calib_data.ima_proc);
 reprojectpoints(calib_data);
 xc = calib_data.ocam_model.xc;
